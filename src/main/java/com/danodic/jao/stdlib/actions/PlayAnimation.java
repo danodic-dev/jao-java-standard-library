@@ -1,4 +1,4 @@
-package com.danodic.jao.stdlib.stdlib.actions;
+package com.danodic.jao.stdlib.actions;
 
 import com.danodic.jao.action.Action;
 import com.danodic.jao.action.IAction;
