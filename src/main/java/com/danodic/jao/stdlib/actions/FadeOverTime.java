@@ -20,6 +20,8 @@ public class FadeOverTime implements IAction {
 
 	// Define if the event is done
 	private boolean done;
+	private boolean copyOpacity;
+	private boolean copiedOpacity;
 
 	public FadeOverTime() {
 		this(0f, 1f, 1000L);
@@ -37,6 +39,8 @@ public class FadeOverTime implements IAction {
 		this.startTime = null;
 		this.endTime = null;
 		this.currentOpacity = startOpacity;
+		this.copyOpacity = false;
+		this.copiedOpacity = false;
 
 		// Initialize values
 		reset();
@@ -54,6 +58,10 @@ public class FadeOverTime implements IAction {
 		if (startTime == null || endTime == null) {
 			startTime = object.getElapsed();
 			endTime = startTime + duration;
+		}
+		
+		if(copyOpacity && !copiedOpacity) {
+			startOpacity = (float) object.getParameters().get("opacity");
 		}
 
 		// Get the elapsed time
@@ -77,14 +85,21 @@ public class FadeOverTime implements IAction {
 	public void reset() {
 		startTime = null;
 		endTime = null;
-		this.currentOpacity = startOpacity;
 		done = false;
+		this.currentOpacity = startOpacity;
+		copiedOpacity = false;
 	}
 
 	@Override
 	public void loadModel(ActionModel model) {
-		if (model.getAttributes().containsKey("start_opacity"))
-			startOpacity = Float.parseFloat(model.getAttributes().get("start_opacity"));
+		if (model.getAttributes().containsKey("start_opacity")) {
+			if(model.getAttributes().get("start_opacity").equalsIgnoreCase("current")) {
+				copyOpacity = true;
+				copiedOpacity = false;
+			}else {				
+				startOpacity = Float.parseFloat(model.getAttributes().get("start_opacity"));
+			}
+		}
 
 		if (model.getAttributes().containsKey("end_opacity"))
 			endOpacity = Float.parseFloat(model.getAttributes().get("end_opacity"));

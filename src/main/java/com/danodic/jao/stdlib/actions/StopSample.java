@@ -5,13 +5,13 @@ import com.danodic.jao.action.IAction;
 import com.danodic.jao.core.JaoLayer;
 import com.danodic.jao.model.ActionModel;
 
-@Action(name = "PlaySample", library = "jao.standards")
-public class PlaySample implements IAction {
+@Action(name = "StopSample", library = "jao.standards")
+public class StopSample implements IAction {
 
 	// Define if the event is done
 	private boolean done;
 
-	public PlaySample() {
+	public StopSample() {
 
 		// Initialize stuff
 		done = false;
@@ -27,7 +27,7 @@ public class PlaySample implements IAction {
 
 	@Override
 	public void run(JaoLayer layer) {
-		layer.getParameters().put("play_sample", true);
+		layer.getParameters().put("stop_sample", true);
 		done = true;
 	}
 

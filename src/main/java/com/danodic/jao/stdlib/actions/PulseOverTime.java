@@ -24,7 +24,7 @@ public class PulseOverTime implements IAction {
 	// Define if the event is done
 	private boolean done;
 
-	private Long duration;
+	protected Long duration;
 	private Long elapsed;
 	private Long startTime;
 	private Long endTime;
@@ -112,6 +112,7 @@ public class PulseOverTime implements IAction {
 	@Override
 	public void reset() {
 		// Set the opacity back to the original value
+		startTime = null;
 		loop = originalLoop;
 		endTargetOpacity = endOpacity;
 		startTargetOpacity = startOpacity;
