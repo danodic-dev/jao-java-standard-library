@@ -8,18 +8,25 @@ import com.danodic.jao.model.ActionModel;
 @Action(name = "CurrentFrame", library = "jao.standards")
 public class CurrentFrame implements IInitializer {
 
-	private int currentFrame = 0;
-	
-	@Override
-	public void run(JaoLayer layer) {
-		layer.getParameters().put("current_frame", currentFrame);
-	}
+    private int currentFrame = 0;
 
-	@Override
-	public void loadModel(ActionModel model) {
-		if(model.getAttribute()!=null) {
-			currentFrame = Integer.parseInt(model.getAttribute());
-		}
-	}
+    @Override
+    public void run(JaoLayer layer) {
+        layer.getParameters().put("current_frame", currentFrame);
+    }
 
+    @Override
+    public void loadModel(ActionModel model) {
+        if (model.getAttribute() != null) {
+            currentFrame = Integer.parseInt(model.getAttribute());
+        }
+    }
+
+    @Override
+    public IInitializer clone() {
+        CurrentFrame clone = new CurrentFrame();
+        clone.currentFrame = currentFrame;
+        return clone;
+    }
+    
 }
