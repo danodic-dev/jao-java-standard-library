@@ -6,6 +6,13 @@
     <name>Json Animation Objects Standard Library</name>
     <description>A standard library for the Jao-Java libary.</description>
     <packaging>jar</packaging>
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/danodic-dev/danodic.dev-maven-repository</url>
+        </repository>
+    </repositories>
     <distributionManagement>
         <repository>
             <id>github</id>
