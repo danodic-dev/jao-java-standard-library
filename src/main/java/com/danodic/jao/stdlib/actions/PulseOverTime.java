@@ -9,157 +9,178 @@ import com.danodic.jao.parser.expressions.TimeExpressionParser;
 @Action(name = "PulseOverTime", library = "jao.standards")
 public class PulseOverTime implements IAction {
 
-	// The start and end point of the opacity for pulse
-	private float startOpacity;
-	private float endOpacity;
-	private float currentOpacity;
-	private float endTargetOpacity;
-	private float startTargetOpacity;
+    // The start and end point of the opacity for pulse
+    private float startOpacity;
+    private float endOpacity;
+    private float currentOpacity;
+    private float endTargetOpacity;
+    private float startTargetOpacity;
 
-	// Defines if it should loop
-	private boolean loop;
-	private boolean originalLoop;
-	private boolean bounce;
+    // Defines if it should loop
+    private boolean loop;
+    private boolean originalLoop;
+    private boolean bounce;
 
-	// Define if the event is done
-	private boolean done;
+    // Define if the event is done
+    private boolean done;
 
-	protected Long duration;
-	private Long elapsed;
-	private Long startTime;
-	private Long endTime;
+    protected Long duration;
+    private Long elapsed;
+    private Long startTime;
+    private Long endTime;
 
-	public PulseOverTime() {
-		this(1f, 0f, 1000L);
-	}
+    public PulseOverTime() {
+        this(1f, 0f, 1000L);
+    }
 
-	public PulseOverTime(float startOpacity, float endOpacity, Long duration) {
+    public PulseOverTime(float startOpacity, float endOpacity, Long duration) {
 
-		// Initialize stuff
-		done = false;
-		loop = false;
-		originalLoop = false;
-		bounce = false;
+        // Initialize stuff
+        done = false;
+        loop = false;
+        originalLoop = false;
+        bounce = false;
 
-		// Define standard opacity values
-		this.startOpacity = startOpacity;
-		this.endOpacity = endOpacity;
-		this.startTargetOpacity = startOpacity;
-		this.endTargetOpacity = endOpacity;
-		this.startTime = null;
-		this.endTime = null;
+        // Define standard opacity values
+        this.startOpacity = startOpacity;
+        this.endOpacity = endOpacity;
+        this.startTargetOpacity = startOpacity;
+        this.endTargetOpacity = endOpacity;
+        this.startTime = null;
+        this.endTime = null;
 
-		// Reset targets
-		reset();
-	}
+        // Reset targets
+        reset();
+    }
 
-	@Override
-	public boolean isDone() {
-		return done;
-	}
+    @Override
+    public boolean isDone() {
+        return done || loop;
+    }
 
-	@Override
-	public void run(JaoLayer layer) {
+    @Override
+    public void run(JaoLayer layer) {
 
-		// Reset the start and end time
-		if (startTime == null || endTime == null) {
-			startTime = layer.getElapsed();
-			endTime = startTime + duration;
-		}
+        // Reset the start and end time
+        if (startTime == null || endTime == null) {
+            startTime = layer.getElapsed();
+            endTime = startTime + duration;
+        }
 
-		// Get the elapsed time
-		elapsed = layer.getElapsed() - startTime;
+        // Get the elapsed time
+        elapsed = layer.getElapsed() - startTime;
 
-		// Increment/decrement step
-		currentOpacity = startTargetOpacity
-				+ ((elapsed.floatValue() / duration.floatValue()) * (endTargetOpacity - startTargetOpacity));
+        // Increment/decrement step
+        currentOpacity = startTargetOpacity
+                + ((elapsed.floatValue() / duration.floatValue()) * (endTargetOpacity - startTargetOpacity));
 
-		// Set the object current opacity
-		layer.getParameters().put("opacity", Math.max(0f, Math.min(1f, currentOpacity)));
+        // Set the object current opacity
+        layer.getParameters().put("opacity", Math.max(0f, Math.min(1f, currentOpacity)));
 
-		// Check if we reached the target
-		if ((Float.compare(endTargetOpacity, startTargetOpacity) > 0
-				&& (Float.compare(currentOpacity, endTargetOpacity) > 0
-						|| Float.compare(currentOpacity, startTargetOpacity) < 0))
-				|| (Float.compare(endTargetOpacity, startTargetOpacity) < 0
-						&& (Float.compare(currentOpacity, endTargetOpacity) < 0
-								|| Float.compare(currentOpacity, startTargetOpacity) > 0))) {
+        // Check if we reached the target
+        if ((Float.compare(endTargetOpacity, startTargetOpacity) > 0
+                && (Float.compare(currentOpacity, endTargetOpacity) > 0
+                || Float.compare(currentOpacity, startTargetOpacity) < 0))
+                || (Float.compare(endTargetOpacity, startTargetOpacity) < 0
+                && (Float.compare(currentOpacity, endTargetOpacity) < 0
+                || Float.compare(currentOpacity, startTargetOpacity) > 0))) {
 
-			// In case this is not a loop element, mark as done
-			if (!loop) {
-				done = true;
-				return;
-			}
+            // In case this is not a loop element, mark as done
+            if (!loop) {
+                done = true;
+                return;
+            }
 
-			// In case this is not a bounce animation, just reset it
-			if (!bounce) {
-				reset();
-			} else {
-				invert();
-			}
-		}
-	}
+            // In case this is not a bounce animation, just reset it
+            if (!bounce) {
+                reset();
+            } else {
+                invert();
+            }
+        }
+    }
 
-	@Override
-	public void setLoop(boolean loop) {
-		this.loop = loop;
-	}
+    @Override
+    public void setLoop(boolean loop) {
+        this.loop = loop;
+    }
 
-	public void setBounce(boolean bounce) {
-		this.bounce = bounce;
-	}
+    public void setBounce(boolean bounce) {
+        this.bounce = bounce;
+    }
 
-	@Override
-	public void reset() {
-		// Set the opacity back to the original value
-		startTime = null;
-		loop = originalLoop;
-		endTargetOpacity = endOpacity;
-		startTargetOpacity = startOpacity;
-		currentOpacity = startTargetOpacity;
-	}
+    @Override
+    public void reset() {
+        // Set the opacity back to the original value
+        startTime = null;
+        loop = originalLoop;
+        endTargetOpacity = endOpacity;
+        startTargetOpacity = startOpacity;
+        currentOpacity = startTargetOpacity;
+    }
 
-	private void invert() {
-		startTime = null;
-		// Else, go ahead and invert the target and step and values
-		if (Float.compare(endTargetOpacity, endOpacity) == 0) {
-			endTargetOpacity = startOpacity;
-			startTargetOpacity = endOpacity;
-		} else {
-			endTargetOpacity = endOpacity;
-			startTargetOpacity = startOpacity;
-		}
-	}
+    private void invert() {
+        startTime = null;
+        // Else, go ahead and invert the target and step and values
+        if (Float.compare(endTargetOpacity, endOpacity) == 0) {
+            endTargetOpacity = startOpacity;
+            startTargetOpacity = endOpacity;
+        } else {
+            endTargetOpacity = endOpacity;
+            startTargetOpacity = startOpacity;
+        }
+    }
 
-	@Override
-	public void loadModel(ActionModel model) {
+    @Override
+    public void loadModel(ActionModel model) {
 
-		if (model.getAttributes().containsKey("start_opacity")) {
-			startOpacity = Float.parseFloat(model.getAttributes().get("start_opacity"));
-			startTargetOpacity = startOpacity;
-			currentOpacity = startTargetOpacity;
-		}
+        if (model.getAttributes().containsKey("start_opacity")) {
+            startOpacity = Float.parseFloat(model.getAttributes().get("start_opacity"));
+            startTargetOpacity = startOpacity;
+            currentOpacity = startTargetOpacity;
+        }
 
-		if (model.getAttributes().containsKey("end_opacity")) {
-			endOpacity = Float.parseFloat(model.getAttributes().get("end_opacity"));
-			endTargetOpacity = endOpacity;
-		}
+        if (model.getAttributes().containsKey("end_opacity")) {
+            endOpacity = Float.parseFloat(model.getAttributes().get("end_opacity"));
+            endTargetOpacity = endOpacity;
+        }
 
-		if (model.getAttributes().containsKey("duration"))
-			duration = TimeExpressionParser.parseExpression(model.getAttributes().get("duration"));
+        if (model.getAttributes().containsKey("duration")) {
+            duration = TimeExpressionParser.parseExpression(model.getAttributes().get("duration"));
+        }
 
-		if (model.getAttributes().containsKey("loop")) {
-			loop = Boolean.parseBoolean(model.getAttributes().get("loop"));
-			originalLoop = loop;
-		}
+        if (model.getAttributes().containsKey("loop")) {
+            loop = Boolean.parseBoolean(model.getAttributes().get("loop"));
+            originalLoop = loop;
+        }
 
-		if (model.getAttributes().containsKey("bounce"))
-			bounce = Boolean.parseBoolean(model.getAttributes().get("bounce"));
+        if (model.getAttributes().containsKey("bounce")) {
+            bounce = Boolean.parseBoolean(model.getAttributes().get("bounce"));
+        }
 
-	}
+    }
 
-	@Override
-	public boolean isLoop() {
-		return loop;
-	}
+    @Override
+    public boolean isLoop() {
+        return loop;
+    }
+
+    @Override
+    public IAction clone() {
+        PulseOverTime clone = new PulseOverTime();
+        clone.startOpacity = startOpacity;
+        clone.endOpacity = endOpacity;
+        clone.currentOpacity = currentOpacity;
+        clone.endTargetOpacity = endTargetOpacity;
+        clone.startTargetOpacity = startTargetOpacity;
+        clone.loop = loop;
+        clone.originalLoop = originalLoop;
+        clone.bounce = bounce;
+        clone.done = done;
+        clone.duration = duration;
+        clone.elapsed = elapsed;
+        clone.startTime = startTime;
+        clone.endTime = endTime;
+        return clone;
+    }
 }

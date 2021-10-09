@@ -8,78 +8,94 @@ import com.danodic.jao.model.ActionModel;
 @Action(name = "FadeIn", library = "jao.standards")
 public class FadeIn implements IAction {
 
-	// The start and end point of the opacity for pulse
-	private float startOpacity;
-	private float endOpacity;
-	private float step;
-	private float currentOpacity;
+    // The start and end point of the opacity for pulse
+    private float startOpacity;
+    private float endOpacity;
+    private float step;
+    private float currentOpacity;
 
-	// Define if the event is done
-	private boolean done;
+    // Define if the event is done
+    private boolean done;
 
-	public FadeIn() {
-		this(0f, 1f, 0.1f);
-	}
+    public FadeIn() {
+        this(0f, 1f, 0.1f);
+    }
 
-	public FadeIn(float startOpacity, float endOpacity, float step) {
+    public FadeIn(float startOpacity, float endOpacity, float step) {
 
-		// Initialize stuff
-		done = false;
+        // Initialize stuff
+        done = false;
 
-		// Define standard opacity values
-		this.startOpacity = startOpacity;
-		this.endOpacity = endOpacity;
-		this.step = step;
-		
-		// Initialize values
-		reset();
-	}
+        // Define standard opacity values
+        this.startOpacity = startOpacity;
+        this.endOpacity = endOpacity;
+        this.step = step;
 
-	@Override
-	public boolean isDone() {
-		return done;
-	}
+        // Initialize values
+        reset();
+    }
 
-	@Override
-	public void run(JaoLayer layer) {
+    @Override
+    public boolean isDone() {
+        return done;
+    }
 
-		// Increment/decrement step
-		currentOpacity += step;
+    @Override
+    public void run(JaoLayer layer) {
 
-		// Set the object current opacity
-		layer.getParameters().put("opacity", currentOpacity);
+        // Increment/decrement step
+        currentOpacity += step;
 
-		// Check if we reached the target
-		if (Float.compare(currentOpacity, endOpacity) >= 0) {
-			layer.getParameters().put("opacity", endOpacity);
-			done = true;
-			return;
-		}
-	}
+        // Set the object current opacity
+        layer.getParameters().put("opacity", currentOpacity);
 
-	@Override
-	public void reset() {
-		currentOpacity = startOpacity;
-	}
+        // Check if we reached the target
+        if (Float.compare(currentOpacity, endOpacity) >= 0) {
+            layer.getParameters().put("opacity", endOpacity);
+            done = true;
+            return;
+        }
+    }
 
-	@Override
-	public void loadModel(ActionModel model) {
+    @Override
+    public void reset() {
+        currentOpacity = startOpacity;
+    }
 
-		if(model.getAttributes().containsKey("start_opacity"))
-			startOpacity = Float.parseFloat(model.getAttributes().get("start_opacity"));
-		
-		if(model.getAttributes().containsKey("end_opacity"))
-			endOpacity = Float.parseFloat(model.getAttributes().get("end_opacity"));
-		
-		if(model.getAttributes().containsKey("step"))
-			step = Float.parseFloat(model.getAttributes().get("step"));
-	}
+    @Override
+    public void loadModel(ActionModel model) {
 
-	@Override
-	public void setLoop(boolean loop) {}
+        if (model.getAttributes().containsKey("start_opacity")) {
+            startOpacity = Float.parseFloat(model.getAttributes().get("start_opacity"));
+        }
 
-	@Override
-	public boolean isLoop() {
-		return false;
-	}
+        if (model.getAttributes().containsKey("end_opacity")) {
+            endOpacity = Float.parseFloat(model.getAttributes().get("end_opacity"));
+        }
+
+        if (model.getAttributes().containsKey("step")) {
+            step = Float.parseFloat(model.getAttributes().get("step"));
+        }
+    }
+
+    @Override
+    public void setLoop(boolean loop) {
+    }
+
+    @Override
+    public boolean isLoop() {
+        return false;
+    }
+
+    @Override
+    public IAction clone() {
+        FadeIn clone = new FadeIn();
+        clone.startOpacity = startOpacity;
+        clone.endOpacity = endOpacity;
+        clone.step = step;
+        clone.currentOpacity = currentOpacity;
+        clone.done = done;
+        return clone;
+    }
+
 }
