@@ -18,7 +18,6 @@ jobs:
         server-password: ${{ secrets.PACKAGES_TOKEN }}
     - name: Build
       run: mvn compile -DskipTests
-      env:
     - name: Sonarqube Scan
       run: mvn verify sonar:sonar -Dsonar.login=$SONAR_TOKEN -DskipTests
       env:
