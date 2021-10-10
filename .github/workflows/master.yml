@@ -12,17 +12,11 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 11
-        server-id: danodic.dev-jao-java
-        server-username: PACKAGES_USERNAME
-        server-password: PACKAGES_TOKEN
-        server-id: danodic.dev-jao-java-standard-library
-        server-username: PACKAGES_USERNAME
-        server-password: PACKAGES_TOKEN
     - name: Build
       run: mvn compile -DskipTests
       env:
-        PACKAGES_USERNAME: ${{ secrets.PACKAGES_USERNAME }}
-        PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+        MAVEN_DANODIC_DEV_USERNAME: ${{ secrets.PACKAGES_USERNAME }}
+        MAVEN_DANODIC_DEV_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
     - name: Sonarqube Scan
       run: mvn verify sonar:sonar -Dsonar.login=$SONAR_TOKEN -DskipTests
       env:
@@ -31,5 +25,5 @@ jobs:
     - name: Publish to GitHub Packages
       run: mvn --batch-mode deploy  -DskipTests
       env:
-        PACKAGES_USERNAME: ${{ secrets.PACKAGES_USERNAME }}
-        PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+        MAVEN_DANODIC_DEV_USERNAME: ${{ secrets.PACKAGES_USERNAME }}
+        MAVEN_DANODIC_DEV_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
