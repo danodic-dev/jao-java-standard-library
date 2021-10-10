@@ -12,7 +12,6 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 11
-        settings-path: ${{ github.workspace }}
         server-id: danodic.dev-jao-java
         server-username: ${{ secrets.PACKAGES_USERNAME }}
         server-password: ${{ secrets.PACKAGES_TOKEN }}
