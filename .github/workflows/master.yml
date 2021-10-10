@@ -11,10 +11,9 @@ jobs:
       uses: actions/setup-java@v2
       with:
         distribution: 'temurin'
-        server-id:
         java-version: 11
         settings-path: ${{ github.workspace }}
-        id: danodic.dev-jao-java
+        server-id: danodic.dev-jao-java
         server-username: ${{ secrets.PACKAGES_USERNAME }}
         server-password: ${{ secrets.PACKAGES_TOKEN }}
     - name: Build
