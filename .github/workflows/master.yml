@@ -28,4 +28,6 @@ jobs:
     - name: Publish to GitHub Packages
       run: mvn --batch-mode deploy  -DskipTests
       env:
+        PACKAGES_USERNAME: ${{ secrets.PACKAGES_USERNAME }}
+        PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
